@@ -1,10 +1,11 @@
 # 使用场景
 
-CINNOX 访客网页 SDK 用于在网页应用中集成 CINNOX 访客服务。包含了应用程序管理、认证服务、即时消息服务、会话服务、文件服务、通知服务等多个服务。以下基于 CINNOX 访客网页 SDK 的示例，API 接口文档可以参考附上的 html 文档。
+CINNOX Visitor Web SDK 用于在您的网页应用中集成 CINNOX的访客（Visitor)服务，使您的客户可以进行多人聊天，也可以与您员工（Staff)进行咨询对话。包含了应用程序管理、认证服务、即时消息服务、会话服务、文件服务、通知服务等多个服务。以下基于 CINNOX Visitor Web SDK 的示例，API 接口文档可以参考附上的 html 文档。
 
 ## 先决条件
 
-Visitor SDK 不包含 UI，需要您自行开发使用。另外如果需要 App 通知，需要联系我们进行对接。
+Visitor SDK 不包含 UI，需要您自行开发使用。另外如果需要集成 App 通知，请联系我们进行对接（support@cinnox.com)。
+CINNOX Visitor Web SDK 需要与 CINNOX 主产品互动，如需注册或了解更多，请浏览 www.cinnox.com。
 
 ## 安装
 
@@ -22,11 +23,11 @@ npm install cinnox-visitor-web-sdk
 
 [更新日志](https://github.com/CinnoxGitHub/visitor-web-sdk/blob/main/changelog.md)
 
-## 基于 CINNOX 访客网页 SDK 的示例
+## 基于 CINNOX Visitor Web SDK 的示例
 
-### 初始化应用程序
+### 初始化 CINNOX Visitor Web SDK
 
-初始化 CINNOX 应用程序。
+初始化 CINNOX Visitor Web SDK。
 
 ```js
 import { initApp } from 'cinnox-visitor-web-sdk/app';
@@ -36,9 +37,9 @@ const onSdkLog = (log) => {
   console.log(`[${time}] [${level}] [${namespace}] ${message}`);
 };
 
-// 测试环境 serviceName xxxxx.tb-01.cinnox.com
-// 正式环境 serviceName xxxxx.cinnox.com
-// deviceId 与推送有关，请使用相同 id
+// 测试环境范例 serviceName xxxxx.tb-01.cinnox.com
+// 正式环境范例 serviceName xxxxx.cinnox.com
+// deviceId 与推送相关，请使用相同 id
 const initConfig = {
   deviceId,
   logLevel: LOG_LEVEL.INFO,
@@ -48,29 +49,29 @@ const initConfig = {
 };
 
 initApp(initConfig).then((cxApp) => {
-  console.log('CINNOX SDK 初始化完成')
-  // 将 cxApp 写入 Vue App 全局变量
+  console.log('CINNOX Visitor Web SDK 初始化完成')
+  // 将 cxApp 写入 你的 App 全局变量 （ Vue 或 React ）
   app.config.globalProperties.$cxApp = cxApp
 }).catch((error) => {
-  console.error('CINNOX SDK 初始化失败:', error)
+  console.error('CINNOX Visitor Web SDK 初始化失败:', error)
 })
 
 ```
 
-### 登入
+### 登入访客
 
-CINNOX 访客 SDK，只提供简化的绑定功能，开发者需与您的后端用户服务进行绑定。这里 CINNOX SDK 只简单提供 login API。
-需要注意的是，CINNOX SDK 不会存下 Auth 相关信息，所以需要 APP 开发者在每次 APP 开启时做 Login 操作。
+CINNOX Visitor Web SDK，只提供简化的绑定功能，开发者需与您的后端用户服务进行绑定。这里 CINNOX Visitor Web SDK 只简单提供 login API。
+需要注意的是，CINNOX Visitor Web SDK 不会存下 Auth 相关信息，所以需要 APP 开发者在每次 APP 开启时做 Login 操作。
 
 ```plantuml
 @startuml
-participant "App端" as app
-participant "App后台" as backend
-participant "Cinnox SDK" as sdk
-participant "Cinnox 后台" as cinnox
+participant "Your App Frontend" as app
+participant "Your App Backend" as backend
+participant "CINNOX Visitor Web SDK" as sdk
+participant "CINNOX Backend" as cinnox
 
 [->app: 用户登录
-app->backend: 发送登录讯息给后台
+app->backend: 发送登录消息给后台
 
 activate backend
 backend-->app: 取得 Unique ID
@@ -122,16 +123,16 @@ if (__isSignup__) {
 }
 
 // 因为通知/IM长连线需要在用户登入后才能启动，所以在这里启动长连线
-// 这里的 Notification 不是离线推送，而是 CINNOX SDK 内部与服务器的连线
+// 这里的 Notification 不是离线推送，而是 CINNOX Visitor Web SDK 内部与服务器的连线
 const notification = getNotification(app);
 await startNotificationConnection(notification);
 const im = getInstantMessage(app);
 await startInstantMessageConnection(im);
 ```
 
-### 取得所有开放聊天室
+### 取得所有客户公开群组聊天室
 
-取得所有可以让用户进入的聊天室列表。
+取得所有可以让用户进入的客户公开群组列表。
 
 ```js
 import { getConversationService, queryPublicSpaceList } from 'cinnox-visitor-web-sdk/conversation';
@@ -141,9 +142,9 @@ const conversation = getConversationService(app);
 const roomList = await queryPublicSpaceList(conversation);
 ```
 
-### 取得目前用户已加入的聊天室列表
+### 取得目前用户已加入的最近聊天室列表
 
-取得目前用户已加入的聊天室列表。
+取得目前用户已加入的最近聊天室列表。
 
 ```js
 import { getConversationService, queryCurrentUserRoomList } from 'cinnox-visitor-web-sdk/conversation';
@@ -158,9 +159,9 @@ const filterRoomList = roomList.filter((room) => {
 });
 ```
 
-### 加入聊天室
+### 加入客户公开群组聊天室
 
-从公开聊天室列表中选择一个聊天室加入。
+从客户公开群组聊天室列表中选择一个聊天室加入。
 
 ```js
 import { getConversationService, joinSpace } from 'cinnox-visitor-web-sdk/conversation';
@@ -172,12 +173,12 @@ const room = await joinSpace(conversation, ROOM_ID);
 
 ### 聊天室内用户操作
 
-#### 取得聊天室讨论信息
+#### 取得聊天室对话内容
 
 ```js
 import { getConversationService, queryRoomHistory } from 'cinnox-visitor-web-sdk/conversation';
 
-// 取得最后 30 笔讯息
+// 取得最后 30 笔消息
 let payload = {
   roomId: ROOM_ID,
   limit: 30,
@@ -191,7 +192,7 @@ const conversation = getConversationService(app);
 const roomHistory = await queryRoomHistory(conversation, payload);
 ```
 
-#### 清除聊天室未读
+#### 解除聊天室未读状态
 
 ```js
 import { getInstantMessageService, sendMessageRead,  } from 'cinnox-visitor-web-sdk/im';
@@ -210,7 +211,7 @@ const latestMessage = roomHistory[0];
 await sendMessageRead(im, { roomId: ROOM_ID, seq: latestMessage.seq, createdAt: latestMessage.createAt });
 ```
 
-#### 发送聊天室信息
+#### 发送消息至聊天室
 
 ```js
 import { getInstantMessageService, generateTextMessagePayload, sendTextMessage } from 'cinnox-visitor-web-sdk/im';
@@ -226,7 +227,7 @@ const im = getInstantMessageService(app);
 const sendMessageResult = await sendTextMessage(im, payload);
 ```
 
-#### 发送聊天室档案信息
+#### 发送档案至聊天室
 
 ```js
     uploadImage() {
@@ -294,7 +295,7 @@ const sendMessageResult = await sendTextMessage(im, payload);
     },
 ```
 
-#### 发送聊天室语音信息
+#### 发送语音消息至聊天室
 
 ```js
 import { getInstantMessageService, sendAudioMessage } from 'cinnox-visitor-web-sdk/im';
@@ -330,8 +331,7 @@ const payload = {
 const fileResult = await downloadPrivateFile(fileService, payload);
 ```
 
-### 与聊天室管理人员联系
-
+### 创建咨询聊天室与Staff(企业员工)联系
 ```js
 import { getConversationService, createOrQueryEnquiry } from '@cinnox-web/visitor-web-sdk/conversation';
 
@@ -344,15 +344,15 @@ const conversation = getConversationService(app);
 const enquiry = createOrQueryEnquiry(conversation, payload);
 ```
 
-### 存储空间缓存
+### 本地存储缓存
 
-`启用存储空间缓存`可以让应用程序在下一次开启时，让部分模块在初始化过程中，可以取得暂存在存储空间的资料，提供更快的使用体验。
+`启用本地存储缓存`可以让应用程序在下一次开启时，让部分模块在初始化过程中，可以取得暂存在本地存储空间里的资料，提供更快的使用体验。
 
-目前支援存储空间缓存的功能如下:
+目前支援存储缓存的功能如下:
 
 * 联系人资料，目前支援 500 笔缓存。
 
-#### 初始化存储空间缓存
+#### 初始化本地存储缓存
 
 请在应用程序初始化后，接著进行初始化存储空间缓存，让后续模块进行初始化时可以拿到缓存。
 
@@ -403,9 +403,9 @@ initContactService(app);
 
 ### 聊天室(Room)描述
 
-#### 群组聊天室
+#### 客户公开群组聊天室
 
-供访客与客服进行群组聊天的聊天室。
+供多个访客（Visitor)与员工（Staff）进行群组聊天的聊天室。
 
 ```js
 import { ROOM_TYPE } from 'cinnox-visitor-web-sdk/conversation';
@@ -425,7 +425,7 @@ const roomData = {
   lastUpdatedMessage: {},
 };
 
-// 判断为群组聊天室
+// 判断为客户公开群组聊天室
 const isGroupRoom = roomData.type === ROOM_TYPE.EXTERNAL_SPACE;
 
 // 聊天室识别 ID
@@ -440,15 +440,15 @@ const roomParticipantsCount = roomData.participants.length;
 // 聊天室图示资源网址，若值为空字串代表没有设定图示，请绘制自己的预设图示
 const iconUrl = roomData.icon;
 
-// 聊天室最后一则讯息，若值为空物件代表没有讯息
-// 讯息可以是文字、档案、音讯、系统讯息等
-// 可以参阅"聊天讯息描述"章节，了解如何取得讯息内容
+// 聊天室最后一则消息，若值为空物件代表没有消息
+// 消息可以是文字、档案、音讯、系统消息等
+// 可以参阅"聊天消息描述"章节，了解如何取得消息内容
 const roomLastUpdatedMessage = roomData.lastUpdatedMessage;
 ```
 
 #### 咨询聊天室
 
-供一位访客与客服进行咨询的聊天室
+供一位访客（Visitor）与员工/客服（Staff)进行咨询的聊天室
 
 ```js
 import { getContactService, getUserContactByEid } from 'cinnox-visitor-web-sdk/contact';
@@ -495,17 +495,17 @@ const roomParticipantsCount = roomData.participants.length;
 // 聊天室图示，若值为空字串代表没有设定图示，请绘制自己的预设图示
 const iconUrl = roomData.icon;
 
-// 聊天室最后一则讯息，若值为空物件代表没有讯息
-// 讯息可以是文字、档案、音讯、系统讯息等
-// 可以参阅"聊天讯息描述"章节，了解如何取得讯息内容
+// 聊天室最后一则消息，若值为空物件代表没有消息
+// 消息可以是文字、档案、音讯、系统消息等
+// 可以参阅"聊天消息描述"章节，了解如何取得消息内容
 const roomLastUpdatedMessage = roomData.lastUpdatedMessage;
 ```
 
-### 聊天讯息(Message History)描述
+### 聊天消息(Message History)描述
 
-#### 文字讯息
+#### 文字消息
 
-文字内容的讯息
+文字内容的消息
 
 ```js
 import { HISTORY_TYPE, MESSAGE_CONTENT_TYPE } from 'cinnox-visitor-web-sdk/im';
@@ -531,7 +531,7 @@ const messageData = {
   isUpdated: false,
 };
 
-// 判断为文字讯息
+// 判断为文字消息
 const isTextMessage = messageData.msgContentType === MESSAGE_CONTENT_TYPE.TYPE_TEXT;
 
 // 取得文字内容
@@ -543,17 +543,17 @@ const senderContact = await getUserContactByEid(contactService, senderEid);
 const { firstName, lastName } = senderContact;
 const senderName = `${firstName} ${lastName}`;
 
-// 取得讯息发送时间
+// 取得消息发送时间
 const messageCreatedAt = messageData.createdAt;
 
-// 取得讯息是否曾经编辑过
+// 取得消息是否曾经编辑过
 const isMessageUpdated = messageData.isUpdated;
 
 ```
 
-#### 档案讯息
+#### 档案消息
 
-档案内容的讯息，包含图像、视频、音讯与其他档案。
+档案内容的消息，包含图像、视频、音讯与其他档案。
 
 ```js
 import { HISTORY_TYPE, MESSAGE_CONTENT_TYPE, FILE_TYPE } from 'cinnox-visitor-web-sdk/im';
@@ -586,7 +586,7 @@ const messageData = {
   isUpdated: false,
 };
 
-// 判断档案讯息
+// 判断档案消息
 const isFileMessage = messageData.msgContentType === MESSAGE_CONTENT_TYPE.TYPE_FILE;
 
 // 取得档案内容，显示图片、下载档案等等操作，请参阅 "下载档案" 章节
@@ -604,13 +604,13 @@ const senderContact = await getUserContactByEid(contactService, senderEid);
 const { firstName, lastName } = senderContact;
 const senderName = `${firstName} ${lastName}`;
 
-// 取得讯息发送时间
+// 取得消息发送时间
 const messageCreatedAt = messageData.createdAt;
 ```
 
-#### 系统讯息
+#### 系统消息
 
-显示系统事件的讯息
+显示系统事件的消息
 
 ```js
 import { HISTORY_TYPE, SYSTEM_EVENT_TYPE } from 'cinnox-visitor-web-sdk/im';
@@ -629,7 +629,7 @@ const messageData = {
   }
 };
 
-// 判断为系统讯息
+// 判断为系统消息
 const isSystemMessage = messageData.type === HISTORY_TYPE.SYSTEM;
 
 // 取得系统事件类型，此范例为成员离开事件，更多事件类型请参阅 api_docs 内的描述
